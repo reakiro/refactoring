@@ -1,31 +1,16 @@
 require 'yaml'
 require 'pry'
+require_relative 'console'
+require_relative 'card'
 
 class Account
   attr_accessor :login, :name, :card, :password, :file_path
 
+  include Console
+
   def initialize
     @errors = []
     @file_path = 'accounts.yml'
-  end
-
-  def console
-      puts 'Hello, we are RubyG bank!'
-      puts '- If you want to create account - press `create`'
-      puts '- If you want to load account - press `load`'
-      puts '- If you want to exit - press `exit`'
-
-    # FIRST SCENARIO. IMPROVEMENT NEEDED
-
-    a = gets.chomp
-
-    if a == 'create'
-      create
-    elsif a == 'load'
-      load
-    else
-      exit
-    end
   end
 
   def create
@@ -80,47 +65,6 @@ class Account
     end
   end
 
-  def main_menu
-    loop do
-      puts "\nWelcome, #{@current_account.name}"
-      puts 'If you want to:'
-      puts '- show all cards - press SC'
-      puts '- create card - press CC'
-      puts '- destroy card - press DC'
-      puts '- put money on card - press PM'
-      puts '- withdraw money on card - press WM'
-      puts '- send money to another card  - press SM'
-      puts '- destroy account - press `DA`'
-      puts '- exit from account - press `exit`'
-
-      command = gets.chomp
-
-      if command == 'SC' || command == 'CC' || command == 'DC' || command == 'PM' || command == 'WM' || command == 'SM' || command == 'DA' || command == 'exit'
-        if command == 'SC'
-          show_cards
-        elsif command == 'CC'
-          create_card
-        elsif command == 'DC'
-          destroy_card
-        elsif command == 'PM'
-          put_money
-        elsif command == 'WM'
-          withdraw_money
-        elsif command == 'SM'
-          send_money
-        elsif command == 'DA'
-          destroy_account
-          exit
-        elsif command == 'exit'
-          exit
-          break
-        end
-      else
-        puts "Wrong command. Try again!\n"
-      end
-    end
-  end
-
   def create_card
     loop do
       puts 'You could create one of 3 card types'
@@ -129,35 +73,19 @@ class Account
       puts '- Virtual card. 1$ tax on card INCOME. 1$ tax on SENDING money from this card. 12% tax on WITHDRAWING money. For creation this card - press `virtual`'
       puts '- For exit - press `exit`'
 
-      ct = gets.chomp
-      if ct == 'usual' || ct == 'capitalist' || ct == 'virtual'
-        if ct == 'usual'
-          card = {
-            type: 'usual',
-            number: 16.times.map{rand(10)}.join,
-            balance: 50.00
-          }
-        elsif ct == 'capitalist'
-          card = {
-            type: 'capitalist',
-            number: 16.times.map{rand(10)}.join,
-            balance: 100.00
-          }
-        elsif ct == 'virtual'
-          card = {
-            type: 'virtual',
-            number: 16.times.map{rand(10)}.join,
-            balance: 150.00
-          }
-        end
-        cards = @current_account.card << card
+      card = Card.new
+
+      card_type = gets.chomp
+      if card.card_types.key? (card_type.to_sym)
+        card.generate_card(card_type)
+        cards = @current_account.card << card.card_info
         @current_account.card = cards #important!!!
         new_accounts = []
-        accounts.each do |ac|
-          if ac.login == @current_account.login
+        accounts.each do |account|
+          if account.login == @current_account.login
             new_accounts.push(@current_account)
           else
-            new_accounts.push(ac)
+            new_accounts.push(account)
           end
         end
         File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } #Storing

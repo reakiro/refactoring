@@ -12,10 +12,10 @@ RSpec.describe Account do
   }.freeze
 
   HELLO_PHRASES = [
-    'Hello, we are RubyG bank!',
-    '- If you want to create account - press `create`',
-    '- If you want to load account - press `load`',
-    '- If you want to exit - press `exit`'
+    'hello, we are RubyG bank!',
+    '- if you want to create account - type create',
+    '- if you want to load account - type load',
+    '- if you want to exit - type anything else'
   ].freeze
 
   ASK_PHRASES = {
@@ -69,14 +69,14 @@ RSpec.describe Account do
 
   MAIN_OPERATIONS_TEXTS = [
     'If you want to:',
-    '- show all cards - press SC',
-    '- create card - press CC',
-    '- destroy card - press DC',
-    '- put money on card - press PM',
-    '- withdraw money on card - press WM',
-    '- send money to another card  - press SM',
-    '- destroy account - press `DA`',
-    '- exit from account - press `exit`'
+    '- show all cards - type SC',
+    '- create card - type CC',
+    '- destroy card - type DC',
+    '- put money on card - type PM',
+    '- withdraw money on card - type WM',
+    '- send money to another card  - type SM',
+    '- destroy account - type DA',
+    '- exit from account - type exit'
   ].freeze
 
   CARDS = {
