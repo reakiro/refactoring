@@ -2,7 +2,7 @@ RSpec.describe Account do
   OVERRIDABLE_FILENAME = 'spec/fixtures/account.yml'.freeze
 
   COMMON_PHRASES = {
-    create_first_account: "There is no active accounts, do you want to be the first?[y/n]\n",
+    create_first_account: "there are no active accounts, type 'y' if you want to create one\n",
     destroy_account: "Are you sure you want to destroy account?[y/n]\n",
     if_you_want_to_delete: 'If you want to delete:',
     choose_card: 'Choose the card for putting:',
