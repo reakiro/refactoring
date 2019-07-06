@@ -48,7 +48,7 @@ module AccountOperations
 
   def account_exist(login, password)
     accounts.map do |account|
-      { login: account.login, password: account.password }
+      { login: account.user.login, password: account.user.password }
     end.include?(login: login, password: password)
   end
 end
