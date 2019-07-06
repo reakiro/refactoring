@@ -30,4 +30,10 @@ module Outputer
   def exit_message
     puts "press `exit` to exit\n"
   end
+
+  def errors_output
+    @errors.each do |error|
+      puts error
+    end
+  end
 end

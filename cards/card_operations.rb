@@ -1,8 +1,8 @@
 require_relative 'usual_card'
 require_relative 'capitalist_card'
 require_relative 'virtual_card'
+require_relative '../account_operations'
 require_relative '../outputer'
-require_relative '../file_manager'
 require_relative '../validations'
 
 module CardOperations
@@ -18,7 +18,7 @@ module CardOperations
       return puts "Wrong card type. Try again!\n" if card.nil?
 
       cards = @current_account.card << card
-      @current_account.card = cards # important!!!
+      @current_account.card = cards
       update_accounts(@current_account)
       break
     end
@@ -33,62 +33,36 @@ module CardOperations
       choice = gets.chomp
       break if choice == 'exit'
 
-      if answer_validation(choice)
-        puts "Are you sure you want to delete #{@current_account.card[choice.to_i - 1].number}?[y/n]"
-        confirmation = gets.chomp
-        return unless confirmation == 'y'
+      return puts "You entered wrong number!\n" unless answer_validation(choice)
 
-        @current_account.card.delete_at(choice.to_i - 1)
-        update_accounts(@current_account)
-        break
-      else
-        puts "You entered wrong number!\n"
-      end
+      puts "Are you sure you want to delete #{@current_account.card[choice.to_i - 1].number}?[y/n]"
+      confirmation = gets.chomp
+      return unless confirmation == 'y'
+
+      @current_account.card.delete_at(choice.to_i - 1)
+      update_accounts(@current_account)
+      break
     end
   end
 
   def show_cards
-    if cards
-      @current_account.card.each do |card|
-        puts "- #{card.number}, #{card.type}"
-      end
-    else
-      puts "There is no active cards!\n"
+    return puts "There is no active cards!\n" unless cards
+
+    @current_account.card.each do |card|
+      puts "- #{card.number}, #{card.type}"
     end
   end
 
   def show_cards_for_operations
-    if cards
-      @current_account.card.each_with_index do |card, index|
-        puts "- #{card.number}, #{card.type}, press #{index + 1}"
-      end
-    else
-      puts "There is no active cards!\n"
-      false
+    return puts "There is no active cards!\n" unless cards
+
+    @current_account.card.each_with_index do |card, index|
+      puts "- #{card.number}, #{card.type}, press #{index + 1}"
     end
   end
 
-  def update_accounts(updated_account)
-    new_accounts = accounts.map do |account|
-      account.login == updated_account.login ? updated_account : account
-    end
-    write_to_file(new_accounts)
-  end
-
-  def update_balance(card)
-    accounts.each do |account|
-      account.card.each do |account_card|
-        account_card.balance = card.balance if account_card.number == card.number
-      end
-    end
-  end
-
-  def get_account_by_card(card)
-    accounts.each do |account|
-      account.card.each do |account_card|
-        return account if account_card.number == card.number
-      end
-    end
+  def card_present(card)
+    @current_account.card.include? card
   end
 
   def cards
@@ -97,9 +71,12 @@ module CardOperations
 
   def generate_card(type)
     case type
-    when 'usual'      then UsualCard.new
-    when 'capitalist' then CapitalistCard.new
-    when 'virtual'    then VirtualCard.new
+    when 'usual'
+      UsualCard.new
+    when 'capitalist'
+      CapitalistCard.new
+    when 'virtual'
+      VirtualCard.new
     end
   end
 end

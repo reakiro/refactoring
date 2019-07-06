@@ -5,8 +5,8 @@ RSpec.describe Account do
     create_first_account: "there are no active accounts, type 'y' if you want to create one\n",
     destroy_account: "Are you sure you want to destroy account?[y/n]\n",
     if_you_want_to_delete: 'If you want to delete:',
-    choose_card: 'Choose the card for putting:',
-    choose_card_withdrawing: 'Choose the card for withdrawing:',
+    choose_card: 'Choose the card for your operation:',
+    choose_card_withdrawing: 'Choose the card for your operation:',
     input_amount: 'Input the amount of money you want to put on your card',
     withdraw_amount: 'Input the amount of money you want to withdraw'
   }.freeze
@@ -80,18 +80,9 @@ RSpec.describe Account do
   ].freeze
 
   CARDS = {
-    usual: {
-      type: 'usual',
-      balance: 50.00
-    },
-    capitalist: {
-      type: 'capitalist',
-      balance: 100.00
-    },
-    virtual: {
-      type: 'virtual',
-      balance: 150.00
-    }
+    usual: UsualCard.new,
+    capitalist: CapitalistCard.new,
+    virtual: VirtualCard.new
   }.freeze
 
   let(:current_subject) { described_class.new }
@@ -436,11 +427,15 @@ RSpec.describe Account do
   end
 
   describe '#show_cards' do
-    let(:cards) { [{ number: 1234, type: 'a' }, { number: 5678, type: 'b' }] }
+    let(:usual_card) { current_subject.generate_card('usual') }
+    let(:virtual_card) { current_subject.generate_card('virtual') }
+    let(:cards) { [usual_card, virtual_card] }
 
     it 'display cards if there are any' do
+      usual_card.instance_variable_set(:@number, '1234')
+      virtual_card.instance_variable_set(:@number, '1234')
       current_subject.instance_variable_set(:@current_account, instance_double('Account', card: cards))
-      cards.each { |card| expect(current_subject).to receive(:puts).with("- #{card[:number]}, #{card[:type]}") }
+      cards.each { |card| expect(current_subject).to receive(:puts).with("- #{card.number}, #{card.type}") }
       current_subject.show_cards
     end
 
@@ -479,15 +474,15 @@ RSpec.describe Account do
 
       CARDS.each do |card_type, card_info|
         it "create card with #{card_type} type" do
-          expect(current_subject).to receive_message_chain(:gets, :chomp) { card_info[:type] }
+          expect(current_subject).to receive_message_chain(:gets, :chomp) { card_info.type }
 
           current_subject.create_card
 
           expect(File.exist?(OVERRIDABLE_FILENAME)).to be true
           file_accounts = YAML.load_file(OVERRIDABLE_FILENAME)
-          expect(file_accounts.first.card.first[:type]).to eq card_info[:type]
-          expect(file_accounts.first.card.first[:balance]).to eq card_info[:balance]
-          expect(file_accounts.first.card.first[:number].length).to be 16
+          expect(file_accounts.first.card.first.type).to eq card_info.type
+          expect(file_accounts.first.card.first.balance).to eq card_info.balance
+          expect(file_accounts.first.card.first.number.length).to be 16
         end
       end
     end
@@ -514,8 +509,8 @@ RSpec.describe Account do
     end
 
     context 'with cards' do
-      let(:card_one) { { number: 1, type: 'test' } }
-      let(:card_two) { { number: 2, type: 'test2' } }
+      let(:card_one) { UsualCard.new }
+      let(:card_two) { VirtualCard.new }
       let(:fake_cards) { [card_one, card_two] }
 
       context 'with correct outout' do
@@ -525,7 +520,7 @@ RSpec.describe Account do
           allow(current_subject).to receive_message_chain(:gets, :chomp) { 'exit' }
           expect { current_subject.destroy_card }.to output(/#{COMMON_PHRASES[:if_you_want_to_delete]}/).to_stdout
           fake_cards.each_with_index do |card, i|
-            message = /- #{card[:number]}, #{card[:type]}, press #{i + 1}/
+            message = /- #{card.number}, #{card.type}, press #{i + 1}/
             expect { current_subject.destroy_card }.to output(message).to_stdout
           end
           current_subject.destroy_card
@@ -604,8 +599,8 @@ RSpec.describe Account do
     end
 
     context 'with cards' do
-      let(:card_one) { { number: 1, type: 'test' } }
-      let(:card_two) { { number: 2, type: 'test2' } }
+      let(:card_one) { UsualCard.new }
+      let(:card_two) { VirtualCard.new }
       let(:fake_cards) { [card_one, card_two] }
 
       context 'with correct outout' do
@@ -615,7 +610,7 @@ RSpec.describe Account do
           allow(current_subject).to receive_message_chain(:gets, :chomp) { 'exit' }
           expect { current_subject.put_money }.to output(/#{COMMON_PHRASES[:choose_card]}/).to_stdout
           fake_cards.each_with_index do |card, i|
-            message = /- #{card[:number]}, #{card[:type]}, press #{i + 1}/
+            message = /- #{card.number}, #{card.type}, press #{i + 1}/
             expect { current_subject.put_money }.to output(message).to_stdout
           end
           current_subject.put_money

@@ -3,6 +3,7 @@ require 'pry'
 require_relative 'console'
 require_relative 'cards/card_operations'
 require_relative 'money_operations'
+require_relative 'account_operations'
 require_relative 'user_data'
 
 class Account
@@ -10,6 +11,7 @@ class Account
 
   include CardOperations
   include MoneyOperations
+  include AccountOperations
   include Console
 
   def initialize
@@ -25,9 +27,7 @@ class Account
       password_input
       break if @errors.empty?
 
-      @errors.each do |e|
-        puts e
-      end
+      errors_output
       @errors = []
     end
 
@@ -42,41 +42,14 @@ class Account
     loop do
       return create_the_first_account if accounts.none?
 
-      puts 'Enter your login'
-      login = gets.chomp
-      puts 'Enter your password'
-      password = gets.chomp
+      login = get_login
+      password = get_password
+      next puts 'There is no account with given credentials' unless account_exist(login, password)
 
-      if accounts.map { |a| { login: a.login, password: a.password } }.include?(login: login, password: password)
-        a = accounts.select { |a| login == a.login }.first
-        @current_account = a
-        break
-      else
-        puts 'There is no account with given credentials'
-        next
-      end
+      @current_account = accounts.select { |account| login == account.login }.first
+      break
     end
     main_menu
-  end
-
-  def create_the_first_account
-    puts "there are no active accounts, type 'y' if you want to create one"
-    gets.chomp == 'y' ? create : console
-  end
-
-  def destroy_account
-    puts 'Are you sure you want to destroy account?[y/n]'
-    a = gets.chomp
-    if a == 'y'
-      new_accounts = []
-      accounts.each do |ac|
-        if ac.login == @current_account.login
-        else
-          new_accounts.push(ac)
-        end
-      end
-      File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } # Storing
-    end
   end
 
   private
@@ -118,14 +91,6 @@ class Account
       @age = @age.to_i
     else
       @errors.push('Your Age must be greeter then 23 and lower then 90')
-    end
-  end
-
-  def accounts
-    if File.exist?('accounts.yml')
-      YAML.load_file('accounts.yml')
-    else
-      []
     end
   end
 end

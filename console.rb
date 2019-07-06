@@ -10,7 +10,7 @@ module Console
     case choice
     when 'create' then create
     when 'load'   then load
-    else exit
+    else               exit
     end
   end
 
@@ -35,6 +35,7 @@ module Console
         commands[command.to_sym].call
       elsif command == 'exit'
         exit
+        break
       else
         puts "Wrong command. Try again!\n"
       end
@@ -48,7 +49,7 @@ module Console
 
       exit_message
       choice = gets.chomp
-      break if choice == 'exit'
+      exit if choice == 'exit'
       return puts "You entered wrong number!\n" unless answer_validation(choice)
 
       return @current_account.card[choice.to_i - 1]
@@ -77,5 +78,15 @@ module Console
 
       return amount.to_i
     end
+  end
+
+  def get_login
+    puts 'Enter your login'
+    login = gets.chomp
+  end
+
+  def get_password
+    puts 'Enter your password'
+    password = gets.chomp
   end
 end
