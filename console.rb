@@ -49,7 +49,7 @@ module Console
 
       exit_message
       choice = gets.chomp
-      exit if choice == 'exit'
+      break if choice == 'exit'
       return puts "You entered wrong number!\n" unless answer_validation(choice)
 
       return @current_account.card[choice.to_i - 1]
@@ -74,9 +74,10 @@ module Console
     loop do
       puts 'Input the amount'
       amount = gets.chomp
-      return 'You must input correct amount of money' unless amount.to_i.positive?
+      
+      return puts 'You must input correct amount of money' unless amount.to_i.positive?
 
-      return amount.to_i
+      return amount
     end
   end
 

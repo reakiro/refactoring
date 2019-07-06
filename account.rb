@@ -1,9 +1,9 @@
 require 'yaml'
 require 'pry'
 require_relative 'console'
-require_relative 'cards/card_operations'
-require_relative 'money_operations'
-require_relative 'account_operations'
+require_relative 'operations/card_operations'
+require_relative 'operations/money_operations'
+require_relative 'operations/account_operations'
 require_relative 'user_data'
 
 class Account

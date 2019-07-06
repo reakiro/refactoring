@@ -1,7 +1,7 @@
-require_relative 'cards/card_operations'
-require_relative 'outputer'
-require_relative 'validations'
-require_relative 'console'
+require_relative 'card_operations'
+require_relative '../outputer'
+require_relative '../validations'
+require_relative '../console'
 
 module MoneyOperations
   include Outputer
@@ -12,7 +12,8 @@ module MoneyOperations
   def withdraw_money
     current_card = choose_card
     until current_card.nil?
-      amount = get_amount
+      amount = get_amount.to_i
+      break if amount.zero?
 
       current_card.balance = current_card.balance - amount - current_card.withdraw_tax(amount)
       return puts "You don't have enough money on card for such operation" unless current_card.balance.positive?
@@ -26,7 +27,8 @@ module MoneyOperations
   def put_money
     current_card = choose_card
     until current_card.nil?
-      amount = get_amount
+      amount = get_amount.to_i
+      break if amount.zero?
 
       return puts 'Tax is higher than input amount' unless current_card.put_tax(amount) < amount
 
@@ -42,7 +44,8 @@ module MoneyOperations
     recipient_card = choose_recipient_card
 
     until sender_card.nil? || recipient_card.nil?
-      amount = get_amount
+      amount = get_amount.to_i
+      break if amount.zero?
 
       sender_card.balance = sender_card.balance - amount - sender_card.sender_tax(amount)
       recipient_card.balance = recipient_card.balance + amount - recipient_card.put_tax(amount)

@@ -1,4 +1,4 @@
-require_relative 'file_manager'
+require_relative '../file_manager'
 
 module AccountOperations
   def accounts
