@@ -74,7 +74,7 @@ module Console
     loop do
       puts 'Input the amount'
       amount = gets.chomp
-      
+
       return puts 'You must input correct amount of money' unless amount.to_i.positive?
 
       return amount

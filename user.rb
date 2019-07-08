@@ -8,10 +8,10 @@ class User
 
   def initialize
     @errors = []
-    @name = ""
-    @age = ""
-    @login = ""
-    @password = ""
+    @name = ''
+    @age = ''
+    @login = ''
+    @password = ''
   end
 
   def set_credentials

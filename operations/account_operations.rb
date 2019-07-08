@@ -3,7 +3,7 @@ require_relative '../file_manager'
 module AccountOperations
   def accounts
     return [] unless File.exist?('accounts.yml')
-    
+
     YAML.load_file('accounts.yml')
   end
 
@@ -15,7 +15,7 @@ module AccountOperations
   end
 
   def update_account_by_card(*cards)
-    updated_account = ""
+    updated_account = ''
     accounts.each do |account|
       account.card.each do |account_card|
         cards.each do |card|
