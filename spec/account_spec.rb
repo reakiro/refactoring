@@ -1,3 +1,5 @@
+require 'pry'
+
 RSpec.describe Account do
   OVERRIDABLE_FILENAME = 'spec/fixtures/account.yml'.freeze
 
@@ -717,12 +719,13 @@ RSpec.describe Account do
 
             it do
               custom_cards.each do |custom_card|
+                custom_card.instance_variable_set(:@balance, default_balance)
                 allow(current_subject).to receive_message_chain(:gets, :chomp).and_return(*commands)
                 allow(current_subject).to receive(:accounts) { [current_subject] }
                 current_subject.instance_variable_set(:@card, [custom_card, card_one, card_two])
                 current_subject.instance_variable_set(:@file_path, OVERRIDABLE_FILENAME)
                 new_balance = default_balance + correct_money_amount_greater_than_tax - custom_card.put_tax(correct_money_amount_greater_than_tax)
-
+                # binding.pry
                 expect { current_subject.put_money }.to output(
                   /Money #{correct_money_amount_greater_than_tax} was put on #{custom_card.number}. Balance: #{new_balance}. Tax: #{custom_card.put_tax(correct_money_amount_greater_than_tax)}/
                 ).to_stdout
