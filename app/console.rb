@@ -1,4 +1,4 @@
-require_relative 'outputer'
+require_relative 'helpers/outputer'
 
 module Console
   include Outputer
@@ -89,5 +89,34 @@ module Console
   def get_password
     puts 'Enter your password'
     password = gets.chomp
+  end
+
+  def create
+    loop do
+      set_credentials
+      break if valid?
+
+      errors_output
+      @errors = []
+    end
+    @card = []
+    new_accounts = accounts << self
+    @current_account = self
+    write_to_file(new_accounts)
+    main_menu
+  end
+
+  def load
+    loop do
+      return create_the_first_account if accounts.none?
+
+      login = get_login
+      password = get_password
+      next puts 'There is no account with given credentials' unless account_exist(login, password)
+
+      @current_account = accounts.select { |account| login == account.login }.first
+      break
+    end
+    main_menu
   end
 end

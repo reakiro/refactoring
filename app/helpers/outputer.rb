@@ -8,7 +8,7 @@ module Outputer
   end
 
   def main_menu_output
-    puts "\nWelcome, #{@current_account.user.name}"
+    puts "\nWelcome, #{@current_account.name}"
     puts 'If you want to:'
     puts '- show all cards - type SC'
     puts '- create card - type CC'

@@ -2,7 +2,7 @@ require_relative '../cards/usual_card'
 require_relative '../cards/capitalist_card'
 require_relative '../cards/virtual_card'
 require_relative 'account_operations'
-require_relative '../outputer'
+require_relative '../helpers/outputer'
 require_relative '../validations'
 
 module CardOperations

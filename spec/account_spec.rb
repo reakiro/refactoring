@@ -130,7 +130,7 @@ RSpec.describe Account do
 
     context 'with success result' do
       before do
-        allow_any_instance_of(User).to receive_message_chain(:gets, :chomp).and_return(*success_inputs)
+        allow(current_subject).to receive_message_chain(:gets, :chomp).and_return(*success_inputs)
         allow(current_subject).to receive(:main_menu)
         allow(current_subject).to receive(:accounts).and_return([])
       end
@@ -141,7 +141,7 @@ RSpec.describe Account do
 
       it 'with correct outout' do
         allow(File).to receive(:open)
-        ASK_PHRASES.values.each { |phrase| expect_any_instance_of(User).to receive(:puts).with(phrase) }
+        ASK_PHRASES.values.each { |phrase| expect(current_subject).to receive(:puts).with(phrase) }
         ACCOUNT_VALIDATION_PHRASES.values.map(&:values).each do |phrase|
           expect(current_subject).not_to receive(:puts).with(phrase)
         end
@@ -163,10 +163,9 @@ RSpec.describe Account do
       before do
         all_inputs = current_inputs + success_inputs
         allow(File).to receive(:open)
-        allow_any_instance_of(User).to receive_message_chain(:gets, :chomp).and_return(*all_inputs)
+        allow(current_subject).to receive_message_chain(:gets, :chomp).and_return(*all_inputs)
         allow(current_subject).to receive(:main_menu)
         allow(current_subject).to receive(:accounts).and_return([])
-        allow(current_subject).to receive(:loop).and_yield
       end
 
       context 'with name errors' do
@@ -206,18 +205,12 @@ RSpec.describe Account do
         context 'when exists' do
           let(:error_input) { 'Denis1345' }
           let(:error) { ACCOUNT_VALIDATION_PHRASES[:login][:exists] }
-          let(:user) { User.new }
 
           before do
-            allow(current_subject).to receive(:accounts) { [instance_double('Account', user: user)] }
-            user.instance_variable_set(:@login, error_input)
+            allow(current_subject).to receive(:accounts) { [instance_double('Account', login: error_input)] }
           end
 
-          it do
-            allow_any_instance_of(User).to receive(:errors).and_return([error])
-            expect(current_subject).to receive(:puts).with(error)
-            current_subject.create
-          end
+          it { expect { current_subject.create }.to output(/#{error}/).to_stdout }
         end
       end
 
@@ -275,15 +268,12 @@ RSpec.describe Account do
     end
 
     context 'with active accounts' do
-      let(:user) { User.new }
       let(:login) { 'Johnny' }
       let(:password) { 'johnny1' }
 
       before do
         allow(current_subject).to receive_message_chain(:gets, :chomp).and_return(*all_inputs)
-        allow(current_subject).to receive(:accounts) { [instance_double('Account', user: user)] }
-        user.instance_variable_set(:@login, login)
-        user.instance_variable_set(:@password, password)
+        allow(current_subject).to receive(:accounts) { [instance_double('Account', login: login, password: password)] }
       end
 
       context 'with correct outout' do
@@ -342,7 +332,6 @@ RSpec.describe Account do
   end
 
   describe '#main_menu' do
-    let(:user) { User.new }
     let(:name) { 'John' }
     let(:commands) do
       {
@@ -362,8 +351,7 @@ RSpec.describe Account do
         allow(current_subject).to receive(:show_cards)
         allow(current_subject).to receive(:exit)
         allow(current_subject).to receive_message_chain(:gets, :chomp).and_return('SC', 'exit')
-        current_subject.instance_variable_set(:@current_account, instance_double('Account', user: user))
-        user.instance_variable_set(:@name, name)
+        current_subject.instance_variable_set(:@current_account, instance_double('Account', name: name))
         expect { current_subject.main_menu }.to output(/Welcome, #{name}/).to_stdout
         MAIN_OPERATIONS_TEXTS.each do |text|
           allow(current_subject).to receive_message_chain(:gets, :chomp).and_return('SC', 'exit')
@@ -376,8 +364,7 @@ RSpec.describe Account do
       let(:undefined_command) { 'undefined' }
 
       it 'calls specific methods on predefined commands' do
-        current_subject.instance_variable_set(:@current_account, instance_double('Account', user: user))
-        user.instance_variable_set(:@name, name)
+        current_subject.instance_variable_set(:@current_account, instance_double('Account', name: name))
         allow(current_subject).to receive(:exit)
 
         commands.each do |command, method_name|
@@ -388,8 +375,7 @@ RSpec.describe Account do
       end
 
       it 'outputs incorrect message on undefined command' do
-        current_subject.instance_variable_set(:@current_account, instance_double('Account', user: user))
-        user.instance_variable_set(:@name, name)
+        current_subject.instance_variable_set(:@current_account, instance_double('Account', name: name))
         expect(current_subject).to receive(:exit)
         allow(current_subject).to receive_message_chain(:gets, :chomp).and_return(undefined_command, 'exit')
         expect { current_subject.main_menu }.to output(/#{ERROR_PHRASES[:wrong_command]}/).to_stdout

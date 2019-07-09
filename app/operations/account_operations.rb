@@ -1,4 +1,4 @@
-require_relative '../file_manager'
+require_relative '../helpers/file_manager'
 
 module AccountOperations
   def accounts
@@ -48,7 +48,7 @@ module AccountOperations
 
   def account_exist(login, password)
     accounts.map do |account|
-      { login: account.user.login, password: account.user.password }
+      { login: account.login, password: account.password }
     end.include?(login: login, password: password)
   end
 end

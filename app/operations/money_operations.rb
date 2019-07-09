@@ -1,5 +1,5 @@
 require_relative 'card_operations'
-require_relative '../outputer'
+require_relative '../helpers/outputer'
 require_relative '../validations'
 require_relative '../console'
 

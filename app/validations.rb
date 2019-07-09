@@ -16,6 +16,8 @@ module Validations
     when 20..PositiveInfinity
       @errors.push('Login must be shorter then 20 symbols')
     end
+
+    @errors.push('Such account is already exists') if accounts.map(&:login).include? login
   end
 
   def password_validation(password)
@@ -37,5 +39,9 @@ module Validations
 
   def answer_validation(answer)
     answer.to_i <= @current_account.card.length && answer.to_i.positive?
+  end
+
+  def valid?
+    @errors.empty?
   end
 end
