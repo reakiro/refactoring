@@ -1,122 +1,26 @@
-require_relative 'helpers/outputer'
+require_relative 'account'
+require_relative 'helpers/console_module'
+require_relative 'operations/account_operations'
+require_relative 'operations/card_operations'
+require_relative 'operations/money_operations'
+require_relative 'helpers/user_data'
+require_relative 'helpers/file_manager'
 
-module Console
-  include Outputer
+class Console
+  include ConsoleModule
+  include AccountOperations
+  include CardOperations
+  include UserData
+  include FileManager
+  include MoneyOperations
 
-  def console
-    console_output
-    choice = gets.chomp
+  attr_accessor :account
 
-    case choice
-    when 'create' then create
-    when 'load'   then load
-    else               exit
-    end
+  def initialize
+    @account = Account.new
   end
 
-  def commands
-    {
-      SC: proc { show_cards },
-      CC: proc { create_card },
-      DC: proc { destroy_card },
-      PM: proc { put_money },
-      WM: proc { withdraw_money },
-      SM: proc { send_money },
-      DA: proc { destroy_account; exit }
-    }
-  end
-
-  def main_menu
-    loop do
-      main_menu_output
-      command = gets.chomp
-
-      if commands.key?(command.to_sym)
-        commands[command.to_sym].call
-      elsif command == 'exit'
-        exit
-        break
-      else
-        puts "Wrong command. Try again!\n"
-      end
-    end
-  end
-
-  def choose_card
-    loop do
-      puts 'Choose the card for your operation:'
-      break unless show_cards_for_operations
-
-      exit_message
-      choice = gets.chomp
-      break if choice == 'exit'
-      return puts "You entered wrong number!\n" unless answer_validation(choice)
-
-      return @current_account.card[choice.to_i - 1]
-    end
-  end
-
-  def choose_recipient_card
-    loop do
-      puts 'Enter the recipient card:'
-      card_number = gets.chomp
-      return puts 'Please, input correct number of card' unless card_number.length == 16
-
-      all_cards = accounts.map(&:card).flatten
-      recipient_card = all_cards.select { |card| card.number == card_number }.first
-      return puts "There is no card with number #{card_number}\n" if recipient_card.nil?
-
-      return recipient_card
-    end
-  end
-
-  def get_amount
-    loop do
-      puts 'Input the amount'
-      amount = gets.chomp
-
-      return puts 'You must input correct amount of money' unless amount.to_i.positive?
-
-      return amount
-    end
-  end
-
-  def get_login
-    puts 'Enter your login'
-    login = gets.chomp
-  end
-
-  def get_password
-    puts 'Enter your password'
-    password = gets.chomp
-  end
-
-  def create
-    loop do
-      set_credentials
-      break if valid?
-
-      errors_output
-      @errors = []
-    end
-    @card = []
-    new_accounts = accounts << self
-    @current_account = self
-    write_to_file(new_accounts)
-    main_menu
-  end
-
-  def load
-    loop do
-      return create_the_first_account if accounts.none?
-
-      login = get_login
-      password = get_password
-      next puts 'There is no account with given credentials' unless account_exist(login, password)
-
-      @current_account = accounts.select { |account| login == account.login }.first
-      break
-    end
-    main_menu
+  def run
+    console
   end
 end

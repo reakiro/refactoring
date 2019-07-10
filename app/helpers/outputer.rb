@@ -8,7 +8,7 @@ module Outputer
   end
 
   def main_menu_output
-    puts "\nWelcome, #{@current_account.name}"
+    puts "\nWelcome, #{@account.current_account.name}"
     puts 'If you want to:'
     puts '- show all cards - type SC'
     puts '- create card - type CC'
@@ -32,7 +32,7 @@ module Outputer
   end
 
   def errors_output
-    @errors.each do |error|
+    @account.errors.each do |error|
       puts error
     end
   end

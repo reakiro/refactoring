@@ -1,3 +1,3 @@
-require_relative './app/account'
+require_relative './app/console'
 
-Account.new.console
+Console.new.run

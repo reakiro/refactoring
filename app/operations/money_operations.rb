@@ -1,13 +1,13 @@
 require_relative 'card_operations'
 require_relative '../helpers/outputer'
 require_relative '../validations'
-require_relative '../console'
+require_relative '../helpers/console_module'
 
 module MoneyOperations
   include Outputer
   include CardOperations
   include Validations
-  include Console
+  include ConsoleModule
 
   def withdraw_money
     current_card = choose_card
@@ -18,7 +18,7 @@ module MoneyOperations
       current_card.balance = current_card.balance - amount - current_card.withdraw_tax(amount)
       return puts "You don't have enough money on card for such operation" unless current_card.balance.positive?
 
-      update_accounts(@current_account)
+      update_accounts(@account.current_account)
       puts "Money #{amount} withdrawed from #{current_card.number}. Money left: #{current_card.balance}. Tax: #{current_card.withdraw_tax(amount)}"
       break
     end
@@ -33,7 +33,7 @@ module MoneyOperations
       return puts 'Tax is higher than input amount' unless current_card.put_tax(amount) < amount
 
       current_card.balance = current_card.balance + amount - current_card.put_tax(amount)
-      update_accounts(@current_account)
+      update_accounts(@account.current_account)
       puts "Money #{amount} was put on #{current_card.number}. Balance: #{current_card.balance}. Tax: #{current_card.put_tax(amount)}"
       break
     end

@@ -17,9 +17,9 @@ module CardOperations
       card = generate_card(cardtype)
       return puts "Wrong card type. Try again!\n" if card.nil?
 
-      cards = @current_account.card << card
-      @current_account.card = cards
-      update_accounts(@current_account)
+      cards = @account.current_account.card << card
+      @account.current_account.card = cards
+      update_accounts(@account.current_account)
       break
     end
   end
@@ -35,12 +35,12 @@ module CardOperations
 
       return puts "You entered wrong number!\n" unless answer_validation(choice)
 
-      puts "Are you sure you want to delete #{@current_account.card[choice.to_i - 1].number}?[y/n]"
+      puts "Are you sure you want to delete #{@account.current_account.card[choice.to_i - 1].number}?[y/n]"
       confirmation = gets.chomp
       return unless confirmation == 'y'
 
-      @current_account.card.delete_at(choice.to_i - 1)
-      update_accounts(@current_account)
+      @account.current_account.card.delete_at(choice.to_i - 1)
+      update_accounts(@account.current_account)
       break
     end
   end
@@ -48,7 +48,7 @@ module CardOperations
   def show_cards
     return puts "There is no active cards!\n" unless cards
 
-    @current_account.card.each do |card|
+    @account.current_account.card.each do |card|
       puts "- #{card.number}, #{card.type}"
     end
   end
@@ -56,17 +56,17 @@ module CardOperations
   def show_cards_for_operations
     return puts "There is no active cards!\n" unless cards
 
-    @current_account.card.each_with_index do |card, index|
+    @account.current_account.card.each_with_index do |card, index|
       puts "- #{card.number}, #{card.type}, press #{index + 1}"
     end
   end
 
   def card_present(card)
-    @current_account.card.include? card
+    @account.current_account.card.include? card
   end
 
   def cards
-    @current_account.card.any?
+    @account.current_account.card.any?
   end
 
   def generate_card(type)

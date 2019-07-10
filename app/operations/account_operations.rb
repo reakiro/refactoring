@@ -41,7 +41,7 @@ module AccountOperations
 
     new_accounts = []
     accounts.each do |ac|
-      new_accounts.push(ac) unless ac.login == @current_account.login
+      new_accounts.push(ac) unless ac.login == @account.current_account.login
     end
     write_to_file(new_accounts)
   end
