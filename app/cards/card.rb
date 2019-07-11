@@ -1,6 +1,6 @@
 class Card
   def cc_number_generate
-    16.times.map { rand(10) }.join
+    Array.new(16) { rand(10) }.join
   end
 
   def card_info

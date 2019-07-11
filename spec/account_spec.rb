@@ -150,14 +150,14 @@ RSpec.describe Console do
       end
 
       it 'write to file Account instance' do
-        current_subject.create
-        account.instance_variable_set(:@file_path, OVERRIDABLE_FILENAME)
         current_subject.instance_variable_set(:@account, account)
+        account.instance_variable_set(:@file_path, OVERRIDABLE_FILENAME)
+        current_subject.create
         expect(File.exist?(OVERRIDABLE_FILENAME)).to be true
         accounts = YAML.load_file(OVERRIDABLE_FILENAME)
         expect(accounts).to be_a Array
         expect(accounts.size).to be 1
-        accounts.map { |account| expect(account).to be_a described_class }
+        accounts.map { |account| expect(account).to be_a Account }
       end
     end
 
@@ -414,7 +414,7 @@ RSpec.describe Console do
       it 'deletes account if user inputs is y' do
         expect(current_subject).to receive_message_chain(:gets, :chomp) { success_input }
         expect(current_subject).to receive(:accounts) { accounts }
-        current_subject.instance_variable_set(:@file_path, OVERRIDABLE_FILENAME)
+        account.instance_variable_set(:@file_path, OVERRIDABLE_FILENAME)
         account.instance_variable_set(:@current_account, instance_double('Account', login: correct_login))
         current_subject.instance_variable_set(:@account, account)
 

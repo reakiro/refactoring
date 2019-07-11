@@ -83,12 +83,12 @@ module ConsoleModule
 
   def get_login
     puts 'Enter your login'
-    login = gets.chomp
+    gets.chomp
   end
 
   def get_password
     puts 'Enter your password'
-    password = gets.chomp
+    gets.chomp
   end
 
   def create

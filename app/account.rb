@@ -5,7 +5,6 @@ class Account
 
   def initialize
     @errors = []
-    @current_account
     @file_path = 'accounts.yml'
   end
 end
