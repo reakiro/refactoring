@@ -27,17 +27,16 @@ RSpec.describe Console do
     age: 'Enter your age'
   }.freeze
 
-  # rubocop:disable Metrics/LineLength
-
   CREATE_CARD_PHRASES = [
     'You could create one of 3 card types',
-    '- Usual card. 2% tax on card INCOME. 20$ tax on SENDING money from this card. 5% tax on WITHDRAWING money. For creation this card - press `usual`',
-    '- Capitalist card. 10$ tax on card INCOME. 10% tax on SENDING money from this card. 4$ tax on WITHDRAWING money. For creation this card - press `capitalist`',
-    '- Virtual card. 1$ tax on card INCOME. 1$ tax on SENDING money from this card. 12% tax on WITHDRAWING money. For creation this card - press `virtual`',
+    '- Usual card. 2% tax on card INCOME. 20$ tax on SENDING money from this card.',
+    '5% tax on WITHDRAWING money. For creation this card - press `usual`',
+    '- Capitalist card. 10$ tax on card INCOME. 10% tax on SENDING money from this card.',
+    '4$ tax on WITHDRAWING money. For creation this card - press `capitalist`',
+    '- Virtual card. 1$ tax on card INCOME. 1$ tax on SENDING money from this card.',
+    '12% tax on WITHDRAWING money. For creation this card - press `virtual`',
     '- For exit - press `exit`'
   ].freeze
-
-  # rubocop:enable Metrics/LineLength
 
   ACCOUNT_VALIDATION_PHRASES = {
     name: {

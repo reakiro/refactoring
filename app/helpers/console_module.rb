@@ -70,7 +70,7 @@ module ConsoleModule
     end
   end
 
-  def get_amount
+  def amount_input
     loop do
       puts 'Input the amount'
       amount = gets.chomp
@@ -81,12 +81,12 @@ module ConsoleModule
     end
   end
 
-  def get_login
+  def login_input
     puts 'Enter your login'
     gets.chomp
   end
 
-  def get_password
+  def password_input
     puts 'Enter your password'
     gets.chomp
   end
@@ -99,7 +99,6 @@ module ConsoleModule
       errors_output
       @account.errors = []
     end
-    @account.card = []
     new_accounts = accounts << @account
     @account.current_account = @account
     write_to_file(new_accounts)
@@ -110,8 +109,8 @@ module ConsoleModule
     loop do
       return create_the_first_account if accounts.none?
 
-      login = get_login
-      password = get_password
+      login = login_input
+      password = password_input
       next puts 'There is no account with given credentials' unless account_exist(login, password)
 
       @account.current_account = accounts.select { |account| login == account.login }.first
